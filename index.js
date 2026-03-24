@@ -17,12 +17,12 @@ app.use(cors());
 
 
 // Database Connection with MongoDB
-mongoose.connect(`mongodb+srv://${mongodb_username}:${mongodb_password}@cluster0.fnjlq0j.mongodb.net/?appName=${cluster_name}`)
+mongoose.connect(`mongodb+srv://${mongodb_username}:${mongodb_password}@${cluster_name}.fnjlq0j.mongodb.net/?appName=Cluster0`)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => {
     console.error("MongoDB connection failed:", err.message);
     process.exit(1);
-  });;
+  });
 
 // API Creation
 app.get("/", (req, res) => {
@@ -144,6 +144,6 @@ app.listen(PORT, (error) => {
     console.log(`Server running on port ${PORT}`);
   }
   else {
-    console.error(`Error: ${error} \n Error Type: ${typeof error}`);
+    console.error(`Error: ${error}`);
   }
 });
