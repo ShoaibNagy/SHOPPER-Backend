@@ -94,7 +94,7 @@ const Product = mongoose.model('Product', {
 app.post('/addproduct', async (req, res) => {
   let products = await Product.find({});
   let id;
-  if(products.length > 0){
+  if (products.length > 0) {
     let last_product_array = products.slice(-1);
     let last_product = last_product_array[0];
     id = last_product.id + 1;
@@ -121,7 +121,7 @@ app.post('/addproduct', async (req, res) => {
 });
 
 // Creating API for deleting products
-app.post('/removeproduct', async (req, res) =>{
+app.post('/removeproduct', async (req, res) => {
   await Product.findOneAndDelete({ id: req.body.id });
   console.log("Removed");
 
@@ -138,6 +138,89 @@ app.get('/allproducts', async (req, res) => {
   res.send(products);
 })
 
+// Creating Schema for User model
+const Users = mongoose.model('Users', {
+  username: {
+    type: String,
+  },
+
+  email: {
+    type: String,
+    unique: true,
+  },
+
+  password: {
+    type: String,
+  },
+
+  cartData: {
+    type: Object,
+  },
+
+  date: {
+    type: Date,
+    defualt: Date.now,
+  }
+});
+
+// Creating an ENdpoint for registering a user
+app.post('/signup', async (req, res) => {
+  let check = await Users.findOne({ email: req.body.email })
+  if (check) {
+    return res.status(400).json({
+      success: false,
+      errors: "This account already exists"
+    });
+  }
+  let cart = {};
+  for (let index = 0; index < 300; index++) {
+    cart[index] = 0;
+  }
+  const user = new Users({
+    username: req.body.username,
+    email: req.body.email,
+    password: req.body.password,
+    cartData: cart,
+  })
+
+  await user.save();
+
+  const data = {
+    user: {
+      id: user.id,
+    }
+  }
+
+  const token = jwt.sign(data, 'sercet_ecom');
+  res.json({
+    success: true,
+    token
+  })
+})
+
+// Creating Endpoint for User Login
+app.post('/login', async (req, res) => {
+  let user = await Users.findOne({ email: req.body.email });
+  if (user) {
+    const passCompare = req.body.password === user.password;
+    if (passCompare) {
+      const data = {
+        user: {
+          id: user.id,
+        }
+      }
+
+      const token = jwt.sign(data, 'secret_ecom');
+      res.json({ success: true, token });
+    }
+    else {
+      res.json({ success: false, errors: "Wrong Password" });
+    }
+  }
+  else {
+    res.json({ success: false, errors: "This account doesn\'t exist! Wrong email address" });
+  }
+});
 
 app.listen(PORT, (error) => {
   if (!error) {
