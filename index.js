@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 4000;
 const mongodb_username = process.env.MONGODB_USERNAME || 'shoaibwalid94_db_user';
 const mongodb_password = process.env.MONGODB_PASSWORD || 'c715bWphjvcpK5ga';
 const cluster_name = process.env.CLUSTER_NAME || 'Cluster0';
+const jwt_secret = process.env.JWT_SECRET;
 app.use(express.json());
 app.use(cors());
 
@@ -82,7 +83,7 @@ const Product = mongoose.model('Product', {
 
   date: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 
   available: {
@@ -159,7 +160,7 @@ const Users = mongoose.model('Users', {
 
   date: {
     type: Date,
-    defualt: Date.now,
+    default: Date.now,
   }
 });
 
@@ -191,7 +192,7 @@ app.post('/signup', async (req, res) => {
     }
   }
 
-  const token = jwt.sign(data, 'sercet_ecom');
+  const token = jwt.sign(data, 'secret_ecom');
   res.json({
     success: true,
     token
@@ -279,7 +280,7 @@ app.post('/removefromcart', fetchUser, async (req, res) => {
 });
 
 // Creating endpoint to get cart data
-app.post('./getcart', fetchUser, async (req, res) => {
+app.post('/getcart', fetchUser, async (req, res) => {
   console.log("GetCart");
   let userData = await Users.findOne({_id: req.user.id});
   res.json(userData.cartData);
