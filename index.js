@@ -7,10 +7,10 @@ const path = require('path');
 const cors = require('cors');
 require('dotenv').config();
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT;
 const mongodb_username = process.env.MONGODB_USERNAME || 'shoaibwalid94_db_user';
 const mongodb_password = process.env.MONGODB_PASSWORD || 'c715bWphjvcpK5ga';
-const cluster_name = process.env.CLUSTER_NAME || 'Cluster0';
+const cluster_name = process.env.CLUSTER_NAME || 'cluster0';
 const jwt_secret = process.env.JWT_SECRET;
 app.use(express.json());
 app.use(cors());
@@ -192,7 +192,7 @@ app.post('/signup', async (req, res) => {
     }
   }
 
-  const token = jwt.sign(data, 'secret_ecom');
+  const token = jwt.sign(data, `${jwt_secret}`);
   res.json({
     success: true,
     token
@@ -211,7 +211,7 @@ app.post('/login', async (req, res) => {
         }
       }
 
-      const token = jwt.sign(data, 'secret_ecom');
+      const token = jwt.sign(data, `${jwt_secret}`);
       res.json({ success: true, token });
     }
     else {
